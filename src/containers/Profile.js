@@ -9,38 +9,47 @@ const ProfileWrapper = styled.div`
 `;
 const Avatar = styled.img`
   width: 150px;
+  border-radius: 100px;
 `;
 
 const Profile = () => {
   const [data, setData] = useState({});
   const [repositories, setRepositories] = useState([]);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const profile = await fetch("https://api.github.com/users/niteshseram");
-      const profileJSON = await profile.json();
-      const repos = await fetch(profileJSON.repos_url);
-      const reposJSON = await repos.json();
-      setData(profileJSON);
-      setRepositories(reposJSON);
-      setLoading(false);
+      try {
+        const profile = await fetch("https://api.github.com/users/niteshseram");
+        const profileJSON = await profile.json();
+        const repos = await fetch(profileJSON.repos_url);
+        const reposJSON = await repos.json();
+        setData(profileJSON);
+        setRepositories(reposJSON);
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+        setError(err.message);
+      }
     };
+
     fetchData();
   }, []);
-  if (loading) {
-    return <div>Loading...</div>;
+
+  if (loading || error) {
+    return <div>{loading ? "Loading..." : error}.</div>;
   }
 
   const items = [
     {
-      label: "html_url",
+      label: "Profile URL",
       value: <Link url={data.html_url} title="Github URL" />,
     },
-    { label: "repos_url", value: data.repos_url },
-    { label: "name", value: data.name },
-    { label: "location", value: data.location },
-    { label: "bio", value: data.bio },
+    { label: "Repos URL", value: data.repos_url },
+    { label: "Name", value: data.name },
+    { label: "Location", value: data.location },
+    { label: "Bio", value: data.bio },
   ];
 
   const projects = repositories.map((repository) => ({

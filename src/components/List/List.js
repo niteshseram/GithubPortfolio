@@ -15,6 +15,7 @@ const ListWrapper = styled.ul`
 const ListItem = styled.li`
   display: flex;
   justify-content: space-between;
+  overflow-wrap: break-word;
 `;
 const Label = styled.span`
   font-weight: strong;
